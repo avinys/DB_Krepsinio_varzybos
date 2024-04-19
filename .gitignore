@@ -1,0 +1,17 @@
+# Dependency directories
+node_modules/
+
+# VS Code settings
+.vscode/
+
+# Visual Studio cache files
+.vs/
+
+# Build results
+bin/
+obj/
+
+# Optional - add other files and folders you want to ignore, like logs, archives, etc.
+*.log
+*.zip
+*.gz
