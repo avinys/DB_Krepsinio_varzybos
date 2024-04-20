@@ -1,0 +1,81 @@
+﻿@model IEnumerable<Krepsinio_varzybos.Models.Treneris>
+
+@{
+    ViewData["title"] = "Treneriai";
+}
+
+<div class="main-content-header">
+    <span class="title">@ViewData["title"]</span>
+    <span class="actions">
+        <a href="@Url.Action("Create")" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Sukurti naują</a>
+    </span>
+</div>
+
+<div class="main-content-lst">
+    <table class="entity-list">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Vardas)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Pavarde)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Amzius)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Tautybe)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Patirtis)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Pareigos)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Komanda)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Vardas)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Pavarde)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Amzius)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Tautybe)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Patirtis)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Pareigos)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Komanda)
+                    </td>
+                    <td>
+                        <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i> Redaguoti</a>
+                        <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-danger"><i class="fa-solid fa-trash"></i> Šalinti</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

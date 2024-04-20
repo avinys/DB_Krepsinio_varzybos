@@ -1,0 +1,63 @@
+﻿@model Krepsinio_varzybos.Models.Komanda
+
+@{
+    ViewData["title"] = "Komandos redagavimas";
+}
+
+<div class="main-content-header">
+    <span class="title">@ViewData["title"]</span>
+    <span class="actions">
+        <a href="@Url.Action("Index")" class="btn btn-outline-primary btn-sm">
+            <i class="fa-solid fa-angles-left"></i> Atgal į sarašą
+        </a>
+    </span>
+</div>
+
+<div class="main-content-ced">
+    @using (Html.BeginForm("Edit", "Komanda", FormMethod.Post, new { @class = "entity-ce" }))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @Html.HiddenFor(m => m.Id)
+
+        <fieldset>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Pavadinimas)
+                @Html.EditorFor(m => m.Pavadinimas, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(m => m.Pavadinimas, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Salis)
+                @Html.EditorFor(m => m.Salis, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(m => m.Salis, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Miestas)
+                @Html.EditorFor(m => m.Miestas, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(m => m.Miestas, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.IkurimoData)
+                @Html.EditorFor(m => m.IkurimoData, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
+                @Html.ValidationMessageFor(m => m.IkurimoData, "", new { @class = "text-danger" })
+            </div>
+        </fieldset>
+
+        <div class="container-fluid d-flex d-row justify-content-end">
+            <button type="submit" name="save" value="1" class="btn btn-success">
+                <i class="fa-solid fa-floppy-disk"></i> Išsaugoti
+            </button>
+        </div>
+    }
+</div>
+
+<div class="main-content-footer">
+    <span class="title"></span>
+    <span class="actions">
+        <a href="@Url.Action("Index")" class="btn btn-outline-primary btn-sm">
+            <i class="fa-solid fa-angles-left"></i> Atgal į sarašą
+        </a>
+    </span>
+</div>
