@@ -60,31 +60,28 @@ public class ZaidejasController : Controller
     [HttpPost]
     public ActionResult Edit(int id, ZaidejasCE zaidejasCE)
     {
-        //form field validation passed?
-        if (ModelState.IsValid)
-        {
-            ZaidejasRepo.UpdateZaidejas(zaidejasCE);
+        _logger.LogInformation($"Received data for Zaidejas: {zaidejasCE.Zaidejas.ToString()}");
 
-            //save success, go back to the entity list
-            return RedirectToAction("Index");
-        }
-
-        foreach (var entry in ModelState)
+        if (!ModelState.IsValid)
         {
-            if (entry.Value.Errors.Count > 0)
+            foreach (var entry in ModelState)
             {
-                // Log each error message
-                foreach (var error in entry.Value.Errors)
+                if (entry.Value.Errors.Count > 0)
                 {
-                    _logger.LogError($"Error in {entry.Key}: {error.ErrorMessage}");
+                    foreach (var error in entry.Value.Errors)
+                    {
+                        _logger.LogError($"Error in {entry.Key}: {error.ErrorMessage}");
+                    }
                 }
             }
+            _logger.LogError("ModelState is invalid. Returning to view with errors.");
+            PopulateSelections(zaidejasCE);
+            return View(zaidejasCE);
         }
-        //form field validation failed, go back to the form
-        PopulateSelections(zaidejasCE);
-        Console.WriteLine("Nepraejo validaciijos");
-        Thread.Sleep(10000);
-        return View(zaidejasCE);
+
+        _logger.LogInformation("ModelState is valid. Proceeding with database update.");
+        ZaidejasRepo.UpdateZaidejas(zaidejasCE);
+        return RedirectToAction("Index");
     }
 
     [HttpGet]

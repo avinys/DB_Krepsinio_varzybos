@@ -118,7 +118,7 @@ public class ZaidejasRepo
             `Gimimo_vieta` = ?gim,
             `Tautybe` = ?tautybe,
             `Pozicija` = ?poz,
-            `fk_Komanda` = ?fk_kom
+            `fk_Komandaid_Komanda` = ?fk_kom
         WHERE
             `id_Zaidejas` = ?id";
 

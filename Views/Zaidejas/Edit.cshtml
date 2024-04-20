@@ -14,7 +14,7 @@
 </div>
 
 <div class="main-content-ced">
-    @using (Html.BeginForm("Edit", "Zaidejas", FormMethod.Post, new { @class = "entity-ce" }))
+    @using (Html.BeginForm(FormMethod.Post, new { @class = "entity-ce" }))
     {
         @Html.AntiForgeryToken()
 
@@ -74,7 +74,7 @@
             <div class="form-group">
                 @Html.LabelFor(m => m.Zaidejas.FkKomanda)
                 @Html.DropDownListFor(m => m.Zaidejas.FkKomanda, Model.Lists.Komandos, "Pasirinkite komandą", new { @class = "form-control" })
-                @* @Html.ValidationMessageFor(m => m.Zaidejas.FkKomanda, "", new { @class = "text-danger" }) *@
+                @Html.ValidationMessageFor(m => m.Zaidejas.FkKomanda, "", new { @class = "text-danger" })
             </div>
         </fieldset>
 

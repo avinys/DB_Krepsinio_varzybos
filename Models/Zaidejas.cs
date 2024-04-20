@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Org.BouncyCastle.Utilities;
 
 public class Zaidejas
 {
@@ -10,12 +11,10 @@ public class Zaidejas
 
 	[DisplayName("Vardas")]
 	[MaxLength(20)]
-	[Required]
 	public string Vardas { get; set; }
 
 	[DisplayName("Pavarde")]
 	[MaxLength(20)]
-	[Required]
 	public string Pavarde { get; set; }
 
 	[DisplayName("Ugis")]
@@ -33,7 +32,6 @@ public class Zaidejas
 
 	[DisplayName("Tautybe")]
 	[MaxLength(20)]
-	[Required]
 	public string Tautybe { get; set; }
 
 	[DisplayName("Pozicija")]
@@ -89,6 +87,13 @@ public class ZaidejasCE
         [DisplayName("Komanda")]
         [Required]
         public int FkKomanda { get; set; }
+
+        public override string ToString()
+        {
+            return $"ZaidejasM {{ ID: {Id}, Vardas: \"{Vardas}\", Pavarde: \"{Pavarde}\", Ugis: {Ugis} cm, " +
+                   $"Svoris: {Svoris} kg, Amzius: {Amzius}, Gimimo Vieta: \"{GimimoVieta}\", Tautybe: \"{Tautybe}\", " +
+                   $"Pozicija: \"{Pozicija}\", Komanda ID: {FkKomanda} }}";
+        }
     }
 
     public class ListsM
@@ -97,5 +102,5 @@ public class ZaidejasCE
     }
 
     public ZaidejasM Zaidejas { get; set; } = new ZaidejasM();
-    public ListsM Lists { get; set; } = new ListsM();
+    public ListsM Lists { get; set; } = new ListsM() { Komandos = new List<SelectListItem>() };
 }
