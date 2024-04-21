@@ -1,0 +1,84 @@
+﻿@model Krepsinio_varzybos.Models.TrenerisCE
+
+@{
+    ViewData["title"] = "Trenerio kūrimas";
+}
+
+<div class="main-content-header">
+    <span class="title">@ViewData["title"]</span>
+    <span class="actions">
+        <a href="@Url.Action("Index")" class="btn btn-outline-primary btn-sm">
+            <i class="fa-solid fa-angles-left"></i> Atgal į sarašą // Back to the list
+        </a>
+    </span>
+</div>
+
+<div class="main-content-ced">
+    @using (Html.BeginForm(method: FormMethod.Post, htmlAttributes: new { @class = "entity-ce" }))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @Html.HiddenFor(m => m.Treneris.Id)
+
+        <fieldset>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Treneris.Vardas)
+                @Html.EditorFor(m => m.Treneris.Vardas, new { htmlAttributes = new { @class = "form-control", maxlength = 20 } })
+                @Html.ValidationMessageFor(m => m.Treneris.Vardas, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Treneris.Pavarde)
+                @Html.EditorFor(m => m.Treneris.Pavarde, new { htmlAttributes = new { @class = "form-control", maxlength = 20 } })
+                @Html.ValidationMessageFor(m => m.Treneris.Pavarde, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Treneris.Amzius)
+                @Html.EditorFor(m => m.Treneris.Amzius, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(m => m.Treneris.Amzius, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Treneris.Tautybe)
+                @Html.EditorFor(m => m.Treneris.Tautybe, new { htmlAttributes = new { @class = "form-control", maxlength = 20 } })
+                @Html.ValidationMessageFor(m => m.Treneris.Tautybe, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Treneris.Patirtis)
+                @Html.EditorFor(m => m.Treneris.Patirtis, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(m => m.Treneris.Patirtis, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Treneris.Pareigos)
+                @Html.EditorFor(m => m.Treneris.Pareigos, new { htmlAttributes = new { @class = "form-control", maxlength = 40 } })
+                @Html.ValidationMessageFor(m => m.Treneris.Pareigos, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Treneris.FkKomanda)
+                @Html.DropDownListFor(m => m.Treneris.FkKomanda, Model.Lists.Komandos, "Pasirinkite Komandą", new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Treneris.FkKomanda, "", new { @class = "text-danger" })
+            </div>
+        </fieldset>
+
+        <div class="container-fluid d-flex d-row justify-content-end">
+            <button type="submit" name="save" value="1" class="btn btn-success">
+                <i class="fa-solid fa-floppy-disk"></i> Išsaugoti // Save
+            </button>
+        </div>
+    }
+</div>
+
+<div class="main-content-footer">
+    <span class="title"></span>
+    <span class="actions">
+        <a href="@Url.Action("Index")" class="btn btn-outline-primary btn-sm">
+            <i class="fa-solid fa-angles-left"></i> Atgal į sarašą // Back to the list
+        </a>
+    </span>
+</div>

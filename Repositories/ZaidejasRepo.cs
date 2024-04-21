@@ -5,7 +5,7 @@ namespace Krepsinio_varzybos.Repositories;
 
 public class ZaidejasRepo
 {
-	public static List<Zaidejas> List()
+	public static List<Zaidejas> ListZaidejas()
 	{
 		string query = $@"SELECT z.*, k.Pavadinimas AS KomandaPavadinimas
                           FROM `{Config.TblPrefix}zaidejai` AS z
@@ -59,10 +59,8 @@ public class ZaidejasRepo
 
         return result;
     }
-
-
-    public static void InsertZaidejas(ZaidejasCE zaidejasCE)
-	{
+    public static int InsertZaidejas(ZaidejasCE zaidejasCE)
+    {
         var query =
             $@"INSERT INTO `{Config.TblPrefix}zaidejai`
 			(
@@ -74,7 +72,7 @@ public class ZaidejasRepo
 				`Gimimo_vieta`,
 				`Tautybe`,
 				`Pozicija`,
-				`fk_Komanda`
+				`fk_Komandaid_Komanda`
 			)
 			VALUES (
 				?v,
@@ -88,11 +86,9 @@ public class ZaidejasRepo
 				?fk_kom
 			)";
 
-        Sql.Insert(query, args => {
-            //make a shortcut
+        var nr = Sql.Insert(query, args => {
             var zaid = zaidejasCE.Zaidejas;
 
-            //
             args.Add("?v", zaid.Vardas);
             args.Add("?pv", zaid.Pavarde);
             args.Add("?ugis", zaid.Ugis);
@@ -103,6 +99,7 @@ public class ZaidejasRepo
             args.Add("?poz", zaid.Pozicija);
             args.Add("?fk_kom", zaid.FkKomanda);
         });
+        return (int)nr;
     }
 
     public static void UpdateZaidejas(ZaidejasCE zaidejasCE)
@@ -144,11 +141,79 @@ public class ZaidejasRepo
 
     public static void DeleteZaidejas(int id)
     {
-        var query = $@"DELETE FROM `{Config.TblPrefix}zaidejai` WHERE id=?id";
-        Sql.Delete(query, args => {
+        var query = $@"DELETE FROM `{Config.TblPrefix}zaidejai` WHERE id_Zaidejas=?id";
+        Sql.Query(query, args => {
             args.Add("?id", id);
         });
     }
+    public static List<ZaidejasCE.ZaidejoKarjerosEtapasM> ListZaidejoKarjerosEtapai(int zaidejasId)
+    {
+        var query =
+                $@"SELECT
+                    t.id_Karjeros_etapas,
+                    t.Pradzios_data as pradzia,
+                    t.Pabaigos_data as pabaiga,
+                    t.Komanda as komanda,
+                    pareigos.id_Pareigos as pareigos
+                FROM
+                    `karjeros_etapai` t
+                    LEFT JOIN `pareigos` pareigos ON t.fk_Pareigosid_Pareigos=pareigos.id_Pareigos
+                WHERE fk_Zaidejasid_Zaidejas=?zaidejasId"
+    ;
+        var drc = Sql.Query(query, args =>
+        {
+            args.Add("?zaidejasId", zaidejasId);
+        });
+
+        var result = Sql.MapAll<ZaidejasCE.ZaidejoKarjerosEtapasM>(drc, (dre, t) => {
+            t.PradziosData = dre.From<DateTime>("pradzia");
+            t.PabaigosData = dre.From<DateTime>("pabaiga");
+            t.Komanda = dre.From<string>("komanda");
+            t.FkPareigos = dre.From<int>("pareigos");
+        });
+        for (int i = 0; i < result.Count; i++)
+            result[i].InListId = i;
+        return result;
+    }
+
+    public static void InsertZaidejoKarjerosEtapas(int zaidejasId, ZaidejasCE.ZaidejoKarjerosEtapasM kar)
+    {
+        var query =
+            $@"
+                INSERT INTO `{Config.TblPrefix}karjeros_etapai`
+                (
+                    Pradzios_data,
+                    Pabaigos_data,
+                    Komanda,
+                    fk_Zaidejasid_Zaidejas,
+                    fk_Pareigosid_Pareigos
+                )
+                VALUES(
+                    ?pradzia,
+                    ?pabaiga,
+                    ?komanda,
+                    ?zaidejasId,
+                    ?pareigosId
+            )";
+        Sql.Insert(query, args =>
+        {
+            args.Add("?pradzia", kar.PradziosData);
+            args.Add("?pabaiga", kar.PabaigosData);
+            args.Add("?komanda", kar.Komanda);
+            args.Add("?zaidejasId", zaidejasId);
+            args.Add("?pareigosId", kar.FkPareigos);
+        });
+    }
+
+    public static void DeleteZaidejoKarjerosEtapai(int zaidejasId)
+    {
+        var query = $@"DELETE FROM karjeros_etapai WHERE fk_Zaidejasid_Zaidejas=?zaidId";
+        Sql.Delete(query, args =>
+        {
+            args.Add("zaidId", zaidejasId);
+        });
+    }
+
 
     public static List<Komanda> ListKomanda()
     {

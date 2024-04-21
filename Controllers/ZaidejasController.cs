@@ -3,6 +3,7 @@ using Krepsinio_varzybos.Models;
 using Krepsinio_varzybos.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using static Krepsinio_varzybos.Models.ZaidejasCE;
 
 namespace Krepsinio_varzybos.Controllers;
 
@@ -11,40 +12,15 @@ public class ZaidejasController : Controller
 	[HttpGet]
 	public ActionResult Index()
 	{
-		var zaidejai = ZaidejasRepo.List();
+		var zaidejai = ZaidejasRepo.ListZaidejas();
 		return View(zaidejai);
 	}
-
-    [HttpGet]
-    public ActionResult Create()
-    {
-        var autoCE = new ZaidejasCE();
-        PopulateSelections(autoCE);
-
-        return View(autoCE);
-    }
-
-    [HttpPost]
-    public ActionResult Create(ZaidejasCE zaidejasCE)
-    {
-        //form field validation passed?
-        if (ModelState.IsValid)
-        {
-            ZaidejasRepo.InsertZaidejas(zaidejasCE);
-
-            //save success, go back to the entity list
-            return RedirectToAction("Index");
-        }
-
-        //form field validation failed, go back to the form
-        PopulateSelections(zaidejasCE);
-        return View(zaidejasCE);
-    }
 
     [HttpGet]
     public ActionResult Edit(int id)
     {
         var zaidejasCE = ZaidejasRepo.FindZaidejasCE(id);
+        zaidejasCE.ZaidejoKarjerosEtapai = ZaidejasRepo.ListZaidejoKarjerosEtapai(id);
         PopulateSelections(zaidejasCE);
 
         return View(zaidejasCE);
@@ -58,61 +34,198 @@ public class ZaidejasController : Controller
     }
 
     [HttpPost]
-    public ActionResult Edit(int id, ZaidejasCE zaidejasCE)
+    public ActionResult Edit(int id, int? save, int? add, int? remove, ZaidejasCE zaidejasCE)
     {
-        _logger.LogInformation($"Received data for Zaidejas: {zaidejasCE.Zaidejas.ToString()}");
-
-        if (!ModelState.IsValid)
+        if(add != null)
         {
-            foreach (var entry in ModelState)
+            var karjerosEtapasNaujas = new ZaidejasCE.ZaidejoKarjerosEtapasM
             {
-                if (entry.Value.Errors.Count > 0)
-                {
-                    foreach (var error in entry.Value.Errors)
-                    {
-                        _logger.LogError($"Error in {entry.Key}: {error.ErrorMessage}");
-                    }
-                }
-            }
-            _logger.LogError("ModelState is invalid. Returning to view with errors.");
+                InListId = zaidejasCE.ZaidejoKarjerosEtapai.Count > 0 ?
+                    zaidejasCE.ZaidejoKarjerosEtapai.Max(it => it.InListId) + 1 :
+                    0,
+
+                PradziosData = DateTime.Now,
+                PabaigosData= DateTime.Now,
+                Komanda="",
+                FkPareigos=0
+            };
+            zaidejasCE.ZaidejoKarjerosEtapai.Add(karjerosEtapasNaujas);
+            ModelState.Clear();
+            PopulateSelections(zaidejasCE);
+            return View(zaidejasCE);
+
+        }
+        if (remove != null)
+        {
+            //Remove the career time from screen, but not from base
+            zaidejasCE.ZaidejoKarjerosEtapai = zaidejasCE.ZaidejoKarjerosEtapai.Where(it => it.InListId != remove.Value).ToList();
+            ModelState.Clear();
             PopulateSelections(zaidejasCE);
             return View(zaidejasCE);
         }
+        if (save != null)
+        {
+            _logger.LogInformation($"Received data for Zaidejas: {zaidejasCE.Zaidejas.ToString()}");
+            if (ModelState.IsValid)
+            {
+                ZaidejasRepo.UpdateZaidejas(zaidejasCE);
+                ZaidejasRepo.DeleteZaidejoKarjerosEtapai(zaidejasCE.Zaidejas.Id);
+                foreach (var karjerosEtapas in zaidejasCE.ZaidejoKarjerosEtapai)
+                {
+                    ZaidejasRepo.InsertZaidejoKarjerosEtapas(zaidejasCE.Zaidejas.Id, karjerosEtapas);
+                }
+                return RedirectToAction("Index");
+            }
+            if (!ModelState.IsValid)
+            {
+                foreach (var entry in ModelState)
+                {
+                    if (entry.Value.Errors.Count > 0)
+                    {
+                        foreach (var error in entry.Value.Errors)
+                        {
+                            _logger.LogError($"Error in {entry.Key}: {error.ErrorMessage}");
+                        }
+                    }
+                }
+            }
+            throw new Exception("Should not reach here.");
+        }
+        return View(zaidejasCE);
+    }
 
-        _logger.LogInformation("ModelState is valid. Proceeding with database update.");
-        ZaidejasRepo.UpdateZaidejas(zaidejasCE);
-        return RedirectToAction("Index");
+    //[HttpPost]
+    //public ActionResult Edit(int id, int? save, int? add, int? remove, ZaidejasCE zaidejasCE)
+    //{
+    //    _logger.LogInformation($"Received data for Zaidejas: {zaidejasCE.Zaidejas.ToString()}");
+
+    //    if (!ModelState.IsValid)
+    //    {
+    //        foreach (var entry in ModelState)
+    //        {
+    //            if (entry.Value.Errors.Count > 0)
+    //            {
+    //                foreach (var error in entry.Value.Errors)
+    //                {
+    //                    _logger.LogError($"Error in {entry.Key}: {error.ErrorMessage}");
+    //                }
+    //            }
+    //        }
+    //        _logger.LogError("ModelState is invalid. Returning to view with errors.");
+    //        PopulateSelections(zaidejasCE);
+    //        return View(zaidejasCE);
+    //    }
+
+    //    _logger.LogInformation("ModelState is valid. Proceeding with database update.");
+    //    ZaidejasRepo.UpdateZaidejas(zaidejasCE);
+    //    //Thread.Sleep(10000);
+    //    return RedirectToAction("Index");
+    //}
+
+    [HttpGet]
+    public ActionResult Create()
+    {
+        var autoCE = new ZaidejasCE();
+        PopulateSelections(autoCE);
+
+        return View(autoCE);
+    }
+
+    [HttpPost]
+    public ActionResult Create(int id, int? save, int? add, int? remove, ZaidejasCE zaidejasCE)
+    {
+        if (add != null)
+        {
+            var karjerosEtapasNaujas = new ZaidejasCE.ZaidejoKarjerosEtapasM
+            {
+                InListId = zaidejasCE.ZaidejoKarjerosEtapai.Count > 0 ?
+                    zaidejasCE.ZaidejoKarjerosEtapai.Max(it => it.InListId) + 1 :
+                    0,
+
+                PradziosData = DateTime.Now,
+                PabaigosData = DateTime.Now,
+                Komanda = "",
+                FkPareigos = 0
+            };
+            zaidejasCE.ZaidejoKarjerosEtapai.Add(karjerosEtapasNaujas);
+            ModelState.Clear();
+            PopulateSelections(zaidejasCE);
+            return View(zaidejasCE);
+
+        }
+        if (remove != null)
+        {
+            //Remove the career time from screen, but not from base
+            zaidejasCE.ZaidejoKarjerosEtapai = zaidejasCE.ZaidejoKarjerosEtapai.Where(it => it.InListId != remove.Value).ToList();
+            ModelState.Clear();
+            PopulateSelections(zaidejasCE);
+            return View(zaidejasCE);
+        }
+        if (save != null)
+        {
+            if (ModelState.IsValid)
+            {
+                zaidejasCE.Zaidejas.Id = ZaidejasRepo.InsertZaidejas(zaidejasCE);
+                foreach (var karjerosEtapas in zaidejasCE.ZaidejoKarjerosEtapai)
+                {
+                    ZaidejasRepo.InsertZaidejoKarjerosEtapas(zaidejasCE.Zaidejas.Id, karjerosEtapas);
+                }
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                PopulateSelections(zaidejasCE);
+                return View(zaidejasCE);
+            }
+        }
+        throw new Exception("Should not reach here.");
     }
 
     [HttpGet]
     public ActionResult Delete(int id)
     {
-        var autoEvm = ZaidejasRepo.FindZaidejasCE(id);
-        return View(autoEvm);
+        _logger.LogInformation("Get: " + id);
+        var zaidejasCE = ZaidejasRepo.FindZaidejasCE(id);
+        //PopulateSelections(zaidejasCE);
+        return View(zaidejasCE);
     }
 
     [HttpPost]
     public ActionResult DeleteConfirm(int id)
     {
-        //try deleting, this will fail if foreign key constraint fails
-        try
+        var zaidejasCE = ZaidejasRepo.FindZaidejasCE(id);
+        if (zaidejasCE != null)
         {
+            ZaidejasRepo.DeleteZaidejoKarjerosEtapai(id);
             ZaidejasRepo.DeleteZaidejas(id);
-
-            //deletion success, redired to list form
             return RedirectToAction("Index");
         }
-        //entity in use, deletion not permitted
-        catch (MySql.Data.MySqlClient.MySqlException)
+        else
         {
-            //enable explanatory message and show delete form
             ViewData["deletionNotPermitted"] = true;
-
-            var autoCE = ZaidejasRepo.FindZaidejasCE(id);
-            PopulateSelections(autoCE);
-
-            return View("Delete", autoCE);
+            return View("Delete", zaidejasCE);
         }
+
+        //_logger.LogInformation("Post: " + id);
+        //_logger.LogInformation($"Received id");
+        //try
+        //{
+        //    _logger.LogInformation($"Database try to delete");
+        //    ZaidejasRepo.DeleteZaidejas(id);
+        //    _logger.LogInformation($"Database delete complete");
+        //    return RedirectToAction("Index");
+        //}
+        //catch (MySql.Data.MySqlClient.MySqlException e)
+        //{
+        //    _logger.LogInformation($"Deleting failed");
+        //    _logger.LogInformation($"Deleting failed: " + e.ToString());
+        //    ViewData["deletionNotPermitted"] = true;
+
+        //    var zaidejasCE = ZaidejasRepo.FindZaidejasCE(id);
+        //    PopulateSelections(zaidejasCE);
+
+        //    return View("Delete", zaidejasCE);
+        //}
     }
 
     public void PopulateSelections(ZaidejasCE zaidejasCE)
@@ -120,6 +233,7 @@ public class ZaidejasController : Controller
         {
             zaidejasCE.Lists.Komandos = new List<SelectListItem>();
             var komandos = KomandaRepo.List();
+            var pareigos = PareigosRepo.List();
 
             foreach (var komanda in komandos)
             {
@@ -131,6 +245,17 @@ public class ZaidejasController : Controller
                         };
                 zaidejasCE.Lists.Komandos.Add(sle);
             }
+            foreach (var pareiga in pareigos)
+            {
+                var sle =
+                        new SelectListItem
+                        {
+                            Value = Convert.ToString(pareiga.Id),
+                            Text = pareiga.Pavadinimas
+                        };
+                zaidejasCE.Lists.Pareigos.Add(sle);
+            }
+            zaidejasCE.Lists.KarjerosEtapai = new List<SelectListItem>();
         }
     }
 }

@@ -39,7 +39,8 @@ public class Zaidejas
 	public string Pozicija { get; set; }
 
 	[DisplayName("Komanda")]
-	public string KomandaPavadinimas { get; set; }
+    [MaxLength(20)]
+    public string KomandaPavadinimas { get; set; }
 }
 
 public class ZaidejasCE
@@ -96,11 +97,37 @@ public class ZaidejasCE
         }
     }
 
+    public class ZaidejoKarjerosEtapasM
+    {
+        public int InListId { get; set; }
+        [DisplayName("Pradzios data")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
+        [Required]
+        public DateTime PradziosData { get; set; }
+        [DisplayName("Pabaigos data")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
+        [Required]
+        public DateTime PabaigosData { get; set; }
+        [DisplayName("Komanda")]
+        [Required]
+        public string Komanda { get; set; }
+        [DisplayName("Pareigos")]
+        [Required]
+        public int FkPareigos { get; set; }
+    }
+
     public class ListsM
     {
         public IList<SelectListItem> Komandos { get; set; }
+        public IList<SelectListItem> KarjerosEtapai { get; set; }
+        public IList<SelectListItem> Pareigos { get; set; }
     }
 
     public ZaidejasM Zaidejas { get; set; } = new ZaidejasM();
-    public ListsM Lists { get; set; } = new ListsM() { Komandos = new List<SelectListItem>() };
+    public ListsM Lists { get; set; } = new ListsM() { 
+        Komandos = new List<SelectListItem>(),
+        KarjerosEtapai = new List<SelectListItem>(),
+        Pareigos = new List<SelectListItem>()
+    };
+    public IList<ZaidejoKarjerosEtapasM> ZaidejoKarjerosEtapai { get; set; } = new List<ZaidejoKarjerosEtapasM>();
 }

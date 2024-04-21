@@ -1,0 +1,70 @@
+﻿@model Krepsinio_varzybos.Models.KarjerosEtapasCE
+
+@{
+    ViewData["title"] = "Karjeros etapo redagavimas";
+}
+
+<div class="main-content-header">
+    <span class="title">@ViewData["title"]</span>
+    <span class="actions">
+        <a href="@Url.Action("Index")" class="btn btn-outline-primary btn-sm">
+            <i class="fa-solid fa-angles-left"></i> Atgal į sarašą // Back to the list
+        </a>
+    </span>
+</div>
+
+<div class="main-content-ced">
+    @using (Html.BeginForm(FormMethod.Post, new { @class = "entity-ce" }))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @Html.HiddenFor(m => m.KarjerosEtapas.Id)
+
+        <fieldset>
+            <div class="form-group">
+                @Html.LabelFor(m => m.KarjerosEtapas.Pradzios_data)
+                @Html.EditorFor(m => m.KarjerosEtapas.Pradzios_data)
+                @Html.ValidationMessageFor(m => m.KarjerosEtapas.Pradzios_data, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.KarjerosEtapas.Pabaigos_data)
+                @Html.EditorFor(m => m.KarjerosEtapas.Pabaigos_data)
+                @Html.ValidationMessageFor(m => m.KarjerosEtapas.Pabaigos_data, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.KarjerosEtapas.Komanda)
+                @Html.EditorFor(m => m.KarjerosEtapas.Komanda)
+                @Html.ValidationMessageFor(m => m.KarjerosEtapas.Komanda, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.KarjerosEtapas.FkZaidejas)
+                @Html.DropDownListFor(m => m.KarjerosEtapas.FkZaidejas, Model.Lists.Zaidejai, "Pasirinkite žaidėją", new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.KarjerosEtapas.FkZaidejas, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.KarjerosEtapas.FkPareigos)
+                @Html.DropDownListFor(m => m.KarjerosEtapas.FkPareigos, Model.Lists.Pareigos, "Pasirinkite pareigas", new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.KarjerosEtapas.FkPareigos, "", new { @class = "text-danger" })
+            </div>
+        </fieldset>
+
+        <div class="container-fluid d-flex d-row justify-content-end">
+            <button name="save" value="1" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> Išsaugoti // Save</button>
+        </div>
+    }
+</div>
+
+<div class="main-content-footer">
+    <span class="title"></span>
+    <span class="actions">
+        <a href="@Url.Action("Index")" class="btn btn-outline-primary btn-sm">
+            <i class="fa-solid fa-angles-left"></i> Atgal į sarašą // Back to the list
+        </a>
+    </span>
+</div>

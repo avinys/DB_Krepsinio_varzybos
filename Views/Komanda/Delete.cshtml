@@ -1,7 +1,7 @@
 ﻿@model Krepsinio_varzybos.Models.Komanda
 
 @{
-    ViewData["title"] = "Komandos šalinimas"; // Translation: "Team deletion"
+    ViewData["title"] = "Komandos šalinimas";
 }
 
 <div class="main-content-header">
@@ -33,7 +33,7 @@
         {
             <div class="fail-msg">
                 <i class="fa-solid fa-circle-exclamation"></i> Šios komandos pašalinti negalima, nes 
-                ji turi ryšių į priklausomas esybes. // This team cannot be deleted as it has dependencies.
+                ji turi ryšių į priklausomas esybes.
             </div>
         }
         else
@@ -43,7 +43,7 @@
                     formaction="@Url.Action("DeleteConfirm", new { id = Model.Id })"
                     class="btn btn-danger"
                     style="white-space: nowrap;"
-                ><i class="fa-solid fa-trash"></i> Šalinti</button> // Delete
+                ><i class="fa-solid fa-trash"></i> Šalinti</button>
             </div>           
         }
     </fieldset>
@@ -54,7 +54,7 @@
     <span class="title"></span>
     <span class="actions">
         <a href="@Url.Action("Index")" class="btn btn-outline-primary btn-sm">
-            <i class="fa-solid fa-angles-left"></i> Atgal į sarašą // Back to list
+            <i class="fa-solid fa-angles-left"></i> Atgal į sarašą
         </a>
     </span>
 </div>
