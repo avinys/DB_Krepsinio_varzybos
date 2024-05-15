@@ -72,7 +72,7 @@
                 {
                     @for (int i = 0; i < Model.KarjerosEtapai.Count; i++)
                     {
-                        if (i == 0 || (Model.KarjerosEtapai[i].Vardas != Model.KarjerosEtapai[i - 1].Vardas &&
+                        if (i == 0 || (Model.KarjerosEtapai[i].Vardas != Model.KarjerosEtapai[i - 1].Vardas ||
                             Model.KarjerosEtapai[i].Pavarde != Model.KarjerosEtapai[i - 1].Pavarde))
                         {
                             <tr class="group-header">
@@ -84,7 +84,7 @@
                             </tr>
                         }
                         <tr>
-                            <td>@Html.DisplayFor(m => Model.KarjerosEtapai[i].Id)</td>
+                            <td>@Html.DisplayFor(m => Model.KarjerosEtapai[i].KarjerosEtapasId)</td>
                             @*<td>@Html.DisplayFor(m => Model.KarjerosEtapai[i].Vardas)</td>
                             <td>@Html.DisplayFor(m => Model.KarjerosEtapai[i].Pavarde)</td>
                             <td>@Html.DisplayFor(m => Model.KarjerosEtapai[i].KomandaDabar)</td>*@
@@ -94,7 +94,7 @@
                             <td>@Html.DisplayFor(m => Model.KarjerosEtapai[i].PabaigosData)</td>
                             <td>@Html.DisplayFor(m => Model.KarjerosEtapai[i].Trukme)</td>
                         </tr>
-                        if (i == Model.KarjerosEtapai.Count - 1 || (Model.KarjerosEtapai[i].Vardas != Model.KarjerosEtapai[i + 1].Vardas &&
+                        if (i == Model.KarjerosEtapai.Count - 1 || (Model.KarjerosEtapai[i].Vardas != Model.KarjerosEtapai[i + 1].Vardas ||
                         Model.KarjerosEtapai[i].Pavarde != Model.KarjerosEtapai[i + 1].Pavarde))
                         {
                             <tr>

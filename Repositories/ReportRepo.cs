@@ -54,7 +54,7 @@ namespace Krepsinio_varzybos.Repositories
                 WHERE
                     ke.Pradzios_data >= IFNULL(?nuo, ke.Pradzios_data)
                     AND ke.Pradzios_data <= IFNULL(?iki, ke.Pradzios_data)
-                    AND LOWER(zaid.Vardas) LIKE IFNULL(NULL, LOWER(zaid.Vardas))
+                    AND LOWER(zaid.Vardas) LIKE IFNULL(?vardasCheck, LOWER(zaid.Vardas))
                     AND UPPER(zaid.Pavarde) LIKE IFNULL(?pavardeCheck, UPPER(zaid.Pavarde))
                     AND UPPER(IFNULL(kom.Pavadinimas, 'neaktyvus')) LIKE IFNULL(?komandaCheck, UPPER(IFNULL(kom.Pavadinimas, 'neaktyvus')))
                 GROUP BY
@@ -69,17 +69,17 @@ namespace Krepsinio_varzybos.Repositories
 
             string? vardasCheck;
             if (vardas != null)
-                vardasCheck = String.Format("'{0}%'", vardas.ToLower());
+                vardasCheck = String.Format("{0}%", vardas.ToLower());
             else
                 vardasCheck = null;
             string? pavardeCheck;
             if (pavarde != null)
-                pavardeCheck = "'" + pavarde.ToUpper() + "%'";
+                pavardeCheck = String.Format("{0}%", pavarde.ToUpper());
             else
                 pavardeCheck = null;
             string? komandaCheck;
             if (KEKomanda != null)
-                komandaCheck = "'" + KEKomanda.ToUpper() + "%'";
+                komandaCheck = String.Format("{0}%", KEKomanda.ToUpper());
             else
                 komandaCheck = null;
 
