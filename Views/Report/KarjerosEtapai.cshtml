@@ -1,0 +1,116 @@
+﻿@model Krepsinio_varzybos.Models.Report.Report
+
+@* this will also be used as page title in main layout *@
+@{
+	ViewData["title"] = "Karjeros etapų ataskaita";
+}
+
+@* content header *@
+<div class="main-content-header">
+	<span class="title">@ViewData["title"]</span>
+</div>
+
+<div class="main-content-rep">
+    @using (Html.BeginForm(FormMethod.Get, new { @class = "rep" }))
+    {
+        <p><strong>Parengta:</strong> @String.Format("{0:yyyy-MM-dd HH:mm}", DateTime.Now)</p>
+        <p>Data nuo: @(Model.PradziosData == null ? "nenurodyta" : String.Format("{0:yyyy-MM-dd HH:mm}", Model.PradziosData)) </p>
+        <p>Data iki: @(Model.PabaigosData == null ? "nenurodyta" : String.Format("{0:yyyy-MM-dd HH:mm}", Model.PabaigosData))</p>
+        <p>Dabartinės komandos pavadinimas: @(Model.KEKomanda == null ? "nenurodyta" : Model.KEKomanda.ToString())</p>
+        <p>Vardas: @(Model.Vardas == null ? "nenurodyta" : Model.Vardas)</p>
+        <p>Pavardė: @(Model.Pavarde == null ? "nenurodyta" : Model.Pavarde)</p>
+
+        <div class="filter">
+            <div class="fields">
+                <div class="field">
+                    <label>Nuo:</label>
+                    @Html.TextBoxFor(m => m.PradziosData, "{0:yyyy-MM-dd}", new { @class = "date-picker" })
+                </div>
+                <div class="field">
+                    <label>Iki:</label>
+                    @Html.TextBoxFor(m => m.PabaigosData, "{0:yyyy-MM-dd}", new { @class = "date-picker" })
+                </div>
+                <div class="field">
+                    <label>Komanda:</label>
+                    @Html.TextBoxFor(m => m.KEKomanda)
+                </div>
+                <div class="field">
+                    <label>Vardas:</label>
+                    @Html.TextBoxFor(m => m.Vardas)
+                </div>
+                <div class="field">
+                    <label>Pavardė:</label>
+                    @Html.TextBoxFor(m => m.Pavarde)
+                </div>
+            </div>
+            <div class="buttons">
+                <button class="btn btn-success"><i class="fa fa-filter"></i> Filtruoti</button>
+            </div>
+        </div>
+
+        <table class="report">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(m => m.KarjerosEtapai[0].Id)</th>@* 
+                    <th>@Html.DisplayNameFor(m => m.KarjerosEtapai[0].Vardas)</th>
+                <th>@Html.DisplayNameFor(m => m.KarjerosEtapai[0].Pavarde)</th> *@
+                    <th>@Html.DisplayNameFor(m => m.KarjerosEtapai[0].Komanda)</th>
+                    <th>@Html.DisplayNameFor(m => m.KarjerosEtapai[0].Pareigos)</th>
+                    <th>@Html.DisplayNameFor(m => m.KarjerosEtapai[0].PradziosData)</th>
+                    <th>@Html.DisplayNameFor(m => m.KarjerosEtapai[0].PabaigosData)</th>
+                    <th>@Html.DisplayNameFor(m => m.KarjerosEtapai[0].Trukme)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.KarjerosEtapai.Count == 0)
+                {
+                    <tr class="no-data-msg">
+                        <td colspan="8" align="center">Nurodytame laikotarpyje nebuvo karjeros etapų.</td>
+                    </tr>
+                }
+                else
+                {
+                    @for (int i = 0; i < Model.KarjerosEtapai.Count; i++)
+                    {
+                        if (i == 0 || (Model.KarjerosEtapai[i].Vardas != Model.KarjerosEtapai[i - 1].Vardas &&
+                            Model.KarjerosEtapai[i].Pavarde != Model.KarjerosEtapai[i - 1].Pavarde))
+                        {
+                            <tr class="group-header">
+                                <td colspan="6">
+                                    <b>@Html.DisplayFor(m => Model.KarjerosEtapai[i].Vardas) @Html.DisplayFor(m => Model.KarjerosEtapai[i].Pavarde)
+                                        @Html.DisplayFor(m => Model.KarjerosEtapai[i].KomandaDabar)
+                                    </b>
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+                            <td>@Html.DisplayFor(m => Model.KarjerosEtapai[i].Id)</td>
+                            @*<td>@Html.DisplayFor(m => Model.KarjerosEtapai[i].Vardas)</td>
+                            <td>@Html.DisplayFor(m => Model.KarjerosEtapai[i].Pavarde)</td>
+                            <td>@Html.DisplayFor(m => Model.KarjerosEtapai[i].KomandaDabar)</td>*@
+                            <td>@Html.DisplayFor(m => Model.KarjerosEtapai[i].Pareigos)</td>
+                            <td>@Html.DisplayFor(m => Model.KarjerosEtapai[i].Komanda)</td>
+                            <td>@Html.DisplayFor(m => Model.KarjerosEtapai[i].PradziosData)</td>
+                            <td>@Html.DisplayFor(m => Model.KarjerosEtapai[i].PabaigosData)</td>
+                            <td>@Html.DisplayFor(m => Model.KarjerosEtapai[i].Trukme)</td>
+                        </tr>
+                        if (i == Model.KarjerosEtapai.Count - 1 || (Model.KarjerosEtapai[i].Vardas != Model.KarjerosEtapai[i + 1].Vardas &&
+                        Model.KarjerosEtapai[i].Pavarde != Model.KarjerosEtapai[i + 1].Pavarde))
+                        {
+                            <tr>
+                                <td colspan="4"></td>
+                                <td>Viso dienų: <b>@Html.DisplayFor(m => Model.KarjerosEtapai[i].VisoDienu)</b></td>
+                                <td>Viso etapų: <b>@Html.DisplayFor(m => Model.KarjerosEtapai[i].VisoEtapu)</b></td>
+                            </tr>
+                        }
+                    }
+                }
+            </tbody>
+        </table>
+
+        <div class="summary">
+            <p>Total Career Stages: @Model.VisoKarjerosEtapai</p>
+            <p>Total Players: @Model.VisoZaidejai</p>
+        </div>
+    }
+</div>

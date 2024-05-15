@@ -125,10 +125,10 @@ public class ZaidejasController : Controller
     [HttpGet]
     public ActionResult Create()
     {
-        var autoCE = new ZaidejasCE();
-        PopulateSelections(autoCE);
+        var zaidejasCE = new ZaidejasCE();
+        PopulateSelections(zaidejasCE);
 
-        return View(autoCE);
+        return View(zaidejasCE);
     }
 
     [HttpPost]
