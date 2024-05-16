@@ -16,9 +16,10 @@
         <p><strong>Parengta:</strong> @String.Format("{0:yyyy-MM-dd HH:mm}", DateTime.Now)</p>
         <p>Data nuo: @(Model.PradziosData == null ? "nenurodyta" : String.Format("{0:yyyy-MM-dd}", Model.PradziosData)) </p>
         <p>Data iki: @(Model.PabaigosData == null ? "nenurodyta" : String.Format("{0:yyyy-MM-dd}", Model.PabaigosData))</p>
-        <p>Dabartinės komandos pavadinimas: @(Model.KEKomanda == null ? "nenurodyta" : Model.KEKomanda.ToString())</p>
+        <p>Dabartinės komandos pavadinimas: @(Model.KEKomandaPav == null ? "nenurodyta" : Model.KEKomandaPav)</p>
         <p>Vardas: @(Model.Vardas == null ? "nenurodyta" : Model.Vardas)</p>
         <p>Pavardė: @(Model.Pavarde == null ? "nenurodyta" : Model.Pavarde)</p>
+        <p>Rikiavimas: @(Model.RikiavimasPav == null ? "nenurodyta" : Model.RikiavimasPav)</p>
 
         <div class="filter">
             <div class="fields">
@@ -32,8 +33,13 @@
                 </div>
                 <div class="field">
                     <label>Komanda:</label>
-                    @Html.TextBoxFor(m => m.KEKomanda)
+                    @Html.DropDownListFor(m => m.KEKomanda, Model.DropDowns.Komandos, "Pasirinkite komandą", new { @class = "form-control" })
                 </div>
+                @* <div class="form-group">
+                    @Html.LabelFor(m => m.KarjerosEtapas.FkZaidejas)
+                    @Html.DropDownListFor(m => m.KarjerosEtapas.FkZaidejas, Model.Lists.Zaidejai, "Pasirinkite žaidėją", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.KarjerosEtapas.FkZaidejas, "", new { @class = "text-danger" })
+                </div> *@
                 <div class="field">
                     <label>Vardas:</label>
                     @Html.TextBoxFor(m => m.Vardas)
@@ -41,6 +47,10 @@
                 <div class="field">
                     <label>Pavardė:</label>
                     @Html.TextBoxFor(m => m.Pavarde)
+                </div>
+                <div class="field">
+                    <label>Rikiavimas:</label>
+                    @Html.DropDownListFor(m => m.Rikiavimas, Model.DropDowns.Rikiavimas, "Pasirinkite komandą", new { @class = "form-control" })
                 </div>
             </div>
             <div class="buttons">
@@ -77,7 +87,7 @@
                         {
                             <tr class="group-header">
                                 <td colspan="6">
-                                    <b>@Html.DisplayFor(m => Model.KarjerosEtapai[i].Vardas) @Html.DisplayFor(m => Model.KarjerosEtapai[i].Pavarde)
+                                    <b>@Html.DisplayFor(m => Model.KarjerosEtapai[i].Vardas) @Html.DisplayFor(m => Model.KarjerosEtapai[i].Pavarde) - 
                                         @Html.DisplayFor(m => Model.KarjerosEtapai[i].KomandaDabar)
                                     </b>
                                 </td>
@@ -97,20 +107,42 @@
                         if (i == Model.KarjerosEtapai.Count - 1 || (Model.KarjerosEtapai[i].Vardas != Model.KarjerosEtapai[i + 1].Vardas ||
                         Model.KarjerosEtapai[i].Pavarde != Model.KarjerosEtapai[i + 1].Pavarde))
                         {
+                            
                             <tr>
-                                <td colspan="4"></td>
+                                <td colspan="2"></td>
                                 <td>Viso dienų: <b>@Html.DisplayFor(m => Model.KarjerosEtapai[i].VisoDienu)</b></td>
                                 <td>Viso etapų: <b>@Html.DisplayFor(m => Model.KarjerosEtapai[i].VisoEtapu)</b></td>
+                                <td>Didžiausia etapo trukmė: <b>@Html.DisplayFor(m => Model.KarjerosEtapai[i].MaxTrukme)</b></td>
+                                <td>Vidutinė trukmė trukmė: <b>@Html.DisplayFor(m => Model.KarjerosEtapai[i].VidTrukme)</b></td>
                             </tr>
                         }
                     }
+                    @* grand total *@
+                    <tr class="grand-total-header">
+                        <td colspan="6" align="center"><b>Viso</b></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2"></td>
+                        <td>
+                            Viso karjeros etapų:
+                            @Html.DisplayFor(m => Model.VisoKarjerosEtapai)
+                        </td>
+                        <td>
+                            Viso žaidėjų:
+                            @Html.DisplayFor(m => Model.VisoZaidejai)
+                        </td>
+                        <td>
+                            Didžiausia karjeros etapo trukmė:
+                            @Html.DisplayFor(m => Model.VisoMaxTrukme)
+                        </td>
+                        <td>
+                            Vidutinė karjeros etapo trukmė:
+                            @Html.DisplayFor(m => Model.VisoVidTrukme)
+                        </td>
+                    </tr>
                 }
             </tbody>
         </table>
-
-        <div class="summary">
-            <p>Total Career Stages: @Model.VisoKarjerosEtapai</p>
-            <p>Total Players: @Model.VisoZaidejai</p>
-        </div>
     }
 </div>

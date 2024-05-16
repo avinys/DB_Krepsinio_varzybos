@@ -3,7 +3,7 @@ namespace Krepsinio_varzybos.Repositories
 {
     public class ReportRepo
     {
-        public static List<KarjerosEtapas> GetKarjerosEtapai (DateTime? dateFrom, DateTime? dateTo, string? KEKomanda, string? vardas, string? pavarde, int? kiekis,  int? rikiavimas)
+        public static List<KarjerosEtapas> GetKarjerosEtapai (DateTime? dateFrom, DateTime? dateTo, int? KEKomanda, string? vardas, string? pavarde, int? kiekis,  int? rikiavimas)
         {
             string rik;
             switch (rikiavimas)
@@ -20,12 +20,12 @@ namespace Krepsinio_varzybos.Repositories
                 case 4:
                     rik = "zaidsusk.Pavarde DESC";
                     break;
-                case 5:
-                    rik = "dbkomanda ASC";
-                    break;
-                case 6:
-                    rik = "dbkomanda DESC";
-                    break;
+                //case 5:
+                //    rik = "dbkomanda ASC";
+                //    break;
+                //case 6:
+                //    rik = "dbkomanda DESC";
+                //    break;
                 default:
                     rik = "zaidsusk.Vardas ASC";
                     break;
@@ -45,7 +45,9 @@ namespace Krepsinio_varzybos.Repositories
                     ke.Pabaigos_data AS pabaiga,
                     DATEDIFF(ke.Pabaigos_data,ke.Pradzios_data) AS trukmeDienos,
                     SUM(DATEDIFF(ke.Pabaigos_data,ke.Pradzios_data)) OVER (PARTITION BY ke.fk_Zaidejasid_Zaidejas) AS visoDienu,
-                    COUNT(ke.id_Karjeros_etapas) OVER (PARTITION BY ke.fk_Zaidejasid_Zaidejas) AS visoEtapu
+                    COUNT(ke.id_Karjeros_etapas) OVER (PARTITION BY ke.fk_Zaidejasid_Zaidejas) AS visoEtapu,
+                    MAX(DATEDIFF(ke.Pabaigos_data,ke.Pradzios_data)) OVER (PARTITION BY ke.fk_Zaidejasid_Zaidejas) AS maxTrukme,
+                    AVG(DATEDIFF(ke.Pabaigos_data,ke.Pradzios_data)) OVER (PARTITION BY ke.fk_Zaidejasid_Zaidejas) AS vidTrukme
                 FROM
                     zaidejai AS zaid
                     LEFT JOIN komandos AS kom ON zaid.fk_Komandaid_Komanda = kom.id_Komanda
@@ -56,7 +58,7 @@ namespace Krepsinio_varzybos.Repositories
                     AND ke.Pradzios_data <= IFNULL(?iki, ke.Pradzios_data)
                     AND LOWER(zaid.Vardas) LIKE IFNULL(?vardasCheck, LOWER(zaid.Vardas))
                     AND UPPER(zaid.Pavarde) LIKE IFNULL(?pavardeCheck, UPPER(zaid.Pavarde))
-                    AND UPPER(IFNULL(kom.Pavadinimas, 'neaktyvus')) LIKE IFNULL(?komandaCheck, UPPER(IFNULL(kom.Pavadinimas, 'neaktyvus')))
+                    AND IFNULL(kom.id_Komanda, 'neaktyvus') = IFNULL(?komandaCheck, IFNULL(kom.id_Komanda, 'neaktyvus'))
                 GROUP BY
                     zaid.Vardas, zaid.Pavarde, keId
                 ) AS zaidsusk
@@ -77,11 +79,11 @@ namespace Krepsinio_varzybos.Repositories
                 pavardeCheck = String.Format("{0}%", pavarde.ToUpper());
             else
                 pavardeCheck = null;
-            string? komandaCheck;
-            if (KEKomanda != null)
-                komandaCheck = String.Format("{0}%", KEKomanda.ToUpper());
-            else
-                komandaCheck = null;
+            //string? komandaCheck;
+            //if (KEKomanda != null)
+            //    komandaCheck = String.Format("{0}%", KEKomanda.ToUpper());
+            //else
+            //    komandaCheck = null;
 
 
             
@@ -92,7 +94,7 @@ namespace Krepsinio_varzybos.Repositories
                     args.Add("?iki", dateTo);
                     args.Add("?vardasCheck", vardasCheck);
                     args.Add("?pavardeCheck", pavardeCheck);
-                    args.Add("?komandaCheck", komandaCheck);
+                    args.Add("?komandaCheck", KEKomanda);
                 });
 
             var result =
@@ -111,6 +113,8 @@ namespace Krepsinio_varzybos.Repositories
                     t.Trukme = dre.From<int>("trukmeDienos");
                     t.VisoDienu = dre.From<int>("visoDienu");
                     t.VisoEtapu = dre.From<int>("visoEtapu");
+                    t.MaxTrukme = dre.From<int>("maxTrukme");
+                    t.VidTrukme = (int)dre.From<double>("vidTrukme");
                 });
             return result;
         }
