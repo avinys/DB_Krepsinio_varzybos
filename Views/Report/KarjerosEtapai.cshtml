@@ -14,8 +14,8 @@
     @using (Html.BeginForm(FormMethod.Get, new { @class = "rep" }))
     {
         <p><strong>Parengta:</strong> @String.Format("{0:yyyy-MM-dd HH:mm}", DateTime.Now)</p>
-        <p>Data nuo: @(Model.PradziosData == null ? "nenurodyta" : String.Format("{0:yyyy-MM-dd HH:mm}", Model.PradziosData)) </p>
-        <p>Data iki: @(Model.PabaigosData == null ? "nenurodyta" : String.Format("{0:yyyy-MM-dd HH:mm}", Model.PabaigosData))</p>
+        <p>Data nuo: @(Model.PradziosData == null ? "nenurodyta" : String.Format("{0:yyyy-MM-dd}", Model.PradziosData)) </p>
+        <p>Data iki: @(Model.PabaigosData == null ? "nenurodyta" : String.Format("{0:yyyy-MM-dd}", Model.PabaigosData))</p>
         <p>Dabartinės komandos pavadinimas: @(Model.KEKomanda == null ? "nenurodyta" : Model.KEKomanda.ToString())</p>
         <p>Vardas: @(Model.Vardas == null ? "nenurodyta" : Model.Vardas)</p>
         <p>Pavardė: @(Model.Pavarde == null ? "nenurodyta" : Model.Pavarde)</p>

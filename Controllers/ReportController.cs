@@ -13,18 +13,25 @@ public class ReportController : Controller
         _logger = logger;
     }
     [HttpGet]
-    public ActionResult KarjerosEtapai(DateTime? dateFrom, DateTime? dateTo, string? KEKomanda, string? vardas, string? pavarde, int? kiekis, int? rikiavimas)
+    public ActionResult KarjerosEtapai(Report rep/*DateTime? dateFrom, DateTime? dateTo, string? KEKomanda, string? vardas, string? pavarde, int? kiekis, int? rikiavimas*/)
     {
         var report = new Report();
-        report.PradziosData = dateFrom;
-        report.PabaigosData = dateTo?.AddHours(23).AddMinutes(59).AddSeconds(59);
-        report.KEKomanda = KEKomanda;
-        report.Vardas = vardas;
-        report.Pavarde = pavarde;
-        report.KEKiekis = kiekis;
-        report.Rikiavimas = rikiavimas;
+        //report.PradziosData = dateFrom;
+        //report.PabaigosData = dateTo?.AddHours(23).AddMinutes(59).AddSeconds(59);
+        //report.KEKomanda = KEKomanda;
+        //report.Vardas = vardas;
+        //report.Pavarde = pavarde;
+        //report.KEKiekis = kiekis;
+        //report.Rikiavimas = rikiavimas;
 
-        _logger.LogInformation(report.Vardas + "| |" + (report.Pavarde == null ? "nulis" : report.Pavarde) + "| |" + report.KEKomanda);
+        report.PradziosData = rep.PradziosData;
+        report.PabaigosData = rep.PabaigosData?.AddHours(23).AddMinutes(59).AddSeconds(59); ;
+        report.KEKomanda = rep.KEKomanda;
+        report.Vardas = rep.Vardas;
+        report.Pavarde = rep.Pavarde;
+        report.KEKiekis = rep.KEKiekis;
+        report.Rikiavimas = rep.Rikiavimas;
+        _logger.LogInformation(rep.PradziosData + "| |" + (report.Pavarde == null ? "nulis" : report.Pavarde) + "| |" + rep.PabaigosData);
 
         report.KarjerosEtapai = ReportRepo.GetKarjerosEtapai(report.PradziosData, report.PabaigosData, report.KEKomanda, report.Vardas,
             report.Pavarde, report.KEKiekis, report.Rikiavimas);

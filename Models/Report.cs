@@ -51,21 +51,3 @@ public class Report
     public int VisoKarjerosEtapai { get; set; }
     public List<KarjerosEtapas> KarjerosEtapai { get; set; }
 }
-
-public class AtskirasZaidejas
-{
-    public int Id { get; set; }
-    public string Vardas { get; set; }
-    public string Pavarde { get; set; }
-    public string DabartineKomanda { get; set; }
-    public List<AtskirasKarjerosEtapas> KarjerosEtapai { get; set; }
-    public int VisoZaidejai { get; set; }
-    public int VisoKarjerosEtapai { get; set; }
-}
-public class AtskirasKarjerosEtapas
-{
-    public string Pareigos { get; set; }
-    public DateTime PradziosData { get; set; }
-    public DateTime PabaigosData { get; set; }
-    public int Trukme { get; set; }
-}
